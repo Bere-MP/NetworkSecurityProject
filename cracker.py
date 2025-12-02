@@ -8,11 +8,8 @@ dictionaryFile = "dictionary.txt"
 # Output the cracked passwords found within the program
 outputFile = "cracked.txt"
 
-# Brute Force Numbers
 maxDigitLength = 10
-# Maximum amount of digits at the end of words
 maxEndDigits = 5
-# Amount of double words
 multiWordProcessingLimit = 3000
 
 # How many workers processes
@@ -112,8 +109,7 @@ def main():
         for w in words:
             yield (w, target_hashes)  # words within the dictionary file
 
-    # Improve Performance by limiting the amount to the pool
-    # Workers do the job of processing stage and comparing output
+    # Use multiprocessing for significant performance improvement.
     with Pool(workers) as p:
         for res in p.imap_unordered(check_tuple, pc_stage1(), chunksize=250): # Limit amount of words within process
             if res:
@@ -144,7 +140,7 @@ def main():
                 # non-padded version
                 yield (w + str(n), target_hashes)
 
-    # Workers do the job of processing stage and comparing output
+    # Use multiprocessing for significant performance improvement.
     with Pool(workers) as p:
         for res in p.imap_unordered(check_tuple, pc_stage2(), chunksize=500):
             if res:
@@ -165,7 +161,7 @@ def main():
                 for n in range(10**L):
                     yield (str(n).zfill(L), target_hashes)
 
-            # Workers do the job of processing stage and comparing output
+            # Use multiprocessing for significant performance improvement.
             for res in p.imap_unordered(check_tuple, pc_stage3(), chunksize=1000):
                 if res:
                     h,c = res
@@ -203,6 +199,7 @@ def main():
                     for d in subset:
                         yield (a + b + c + d, target_hashes)
 
+    # Use multiprocessing for significant performance improvement.
     with Pool(workers) as p:
         for res in p.imap_unordered(check_tuple, pc_stage4(), chunksize=500):
             if res:
